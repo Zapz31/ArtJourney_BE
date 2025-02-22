@@ -1,0 +1,26 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Môi trường ảo
+env/
+venv/
+
+# Tệp môi trường
+.env
+
+# Thư mục build
+build/
+dist/
+*.egg-info/
+
+# Tệp log
+*.log
+
+# Tệp tạm thời
+*.tmp
+
+# Cấu hình IDE/Editor
+.vscode/
+.idea/
