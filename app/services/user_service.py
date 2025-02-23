@@ -26,27 +26,24 @@ def get_user_by_email(email: str):
         user = cursor.fetchone()
         return User(**user) if user else None
 
-def create_user(req: SignupRequest):
+def create_user(email: str, hashed_password: str):
     with get_db_cursor() as cursor:
-        hashed_password = get_password_hash(req.password)
         cursor.execute("""
             INSERT INTO users (
-                id,
-                role,
-                email,
-                password,
-                created_at
+                id, email, password, role, created_at
             ) VALUES (
-		        %s,
-                %s,
-                %s,
-                %s,
-                NOW()
+		        %s, %s, %s, %s, NOW()
             )
-            RETURNING id, email, created_at;
-        """, (str(uuid.uuid4()), "CUSTOMER", req.email, hashed_password))
+            RETURNING id, email, created_at, role, fullname, gender, phone_number, birthday;
+        """, (
+            str(uuid.uuid4()), 
+            email,
+            hashed_password,
+            "CUSTOMER"
+        ))
+
         new_user = cursor.fetchone()
-        return User(**new_user)
+        return User(**{**new_user, "role": new_user.get("role", "CUSTOMER")})
 
 def authenticate_user(email: str, password: str):
     print("email in service: >>>> " + email)

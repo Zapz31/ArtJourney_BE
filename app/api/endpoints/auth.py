@@ -3,7 +3,7 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordRequestForm
 from jose import JWTError, jwt
 from app.core.config import settings
-from app.core.security import create_access_token, create_refresh_token
+from app.core.security import create_access_token, create_refresh_token, get_password_hash
 from app.schemas.token import Token
 from app.schemas.user import UserCreate, User
 from app.services.user_service import authenticate_user, create_user, get_user_by_email
@@ -22,7 +22,11 @@ async def register_user(req: request.SignupRequest):
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Email already registered"
         )
-    return create_user(req)
+    # Hash password before storing
+    hashed_password = get_password_hash(req.password)
+
+    # Call create_user() with email & hashed password
+    return create_user(req.email, hashed_password)
 
 @router.post("/login", response_model=Token)
 async def login_for_access_token(login_request: request.LoginRequest):

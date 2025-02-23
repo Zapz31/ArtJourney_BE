@@ -3,15 +3,17 @@ from typing import Optional
 from datetime import date, datetime
 
 class UserBase(BaseModel):
-    fullname: str
-    role: str = Field(..., description="User role in the system")
-    gender: str = Field(..., max_length=1, description="M or F")
-    phone_number: str
+    fullname: Optional[str] = None  
+    role: Optional[str] = "CUSTOMER"  
+    gender: Optional[str] = None  
+    phone_number: Optional[str] = None  
     email: EmailStr
-    birthday: date
+    birthday: Optional[date] = None  
 
     @validator('gender')
     def validate_gender(cls, v):
+        if v is None:
+            return None
         if v not in ['M', 'F']:
             raise ValueError('Gender must be either M or F')
         return v
